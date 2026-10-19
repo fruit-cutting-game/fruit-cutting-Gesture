@@ -549,7 +549,7 @@ btn_restart_rect = (165, h - 80, 220, h - 30)
 
 while True:
     # Rotate the shuriken continuously (degrees per frame).
-    shuriken_spin_angle = (shuriken_spin_angle + 12) % 360
+    shuriken_spin_angle = (shuriken_spin_angle + 30) % 360
 
     ret, webcam_frame = cap.read()
     if not ret:
