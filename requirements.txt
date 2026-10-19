@@ -1,4 +1,5 @@
-opencv-python>=4.8.0
-mediapipe>=0.10.0
-pygame>=2.5.0
-numpy>=1.24.0
+# Known-compatible versions for this game's legacy mp.solutions.hands API
+mediapipe==0.10.21
+numpy<2
+opencv-contrib-python>=4.10.0.84,<4.12
+pygame==2.6.1

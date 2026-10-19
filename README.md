@@ -1,35 +1,35 @@
-# 🍉 Fruit Cutting Gesture Game (កាត់ផ្លែឈើ)
+# Fruit Cutting Gesture Game
 
-An interactive, real-time computer vision game developed in Python. Players use hand gestures captured via a webcam to slice virtual fruits floating across the screen.
+A webcam-controlled fruit-cutting game using Python, OpenCV, MediaPipe, Pygame and NumPy.
 
----
+## Project structure
 
-## 📌 Project Overview
-This project combines gesture detection with 2D game mechanics to deliver a Fruit Ninja-style experience directly on your computer without additional hardware controllers.
+- `main.py` — application entry point
+- `src/game.py` — existing complete game implementation (kept together to preserve current behavior)
+- `src/` — modular helpers for camera, hand tracking, motion, gesture detection, blade trail, fruit, collision, score, state, rendering, audio and configuration
+- `assets/images/` — compatibility asset directory used by the current game
+- `assets/fruits/`, `assets/effects/`, `assets/ui/` — categorized copies for future modular development
+- `assets/sounds/` — sound files
+- `tests/` — automated tests
+- `docs/project-requirements.docx` — project requirements
 
-### Key Features
-- **Real-Time Hand Tracking**: Uses MediaPipe to detect and track finger and palm gestures via webcam.
-- **Gesture Slicing Physics**: Calculates motion velocity and trajectories to register fruit slicing actions accurately.
-- **Dynamic Gameplay**: Includes fruit spawning algorithms, collision detection, combo multipliers, score tracking, and lives management.
-- **Interactive UI**: Clean heads-up display (HUD) showing scores, remaining lives, and visual feedback for cut effects.
+## Setup (Windows)
 
----
+**Recommended: use the included `run_game.bat`.** Double-click it to create a separate Python 3.12 environment, install compatible dependencies, test MediaPipe, and start the game. This avoids using the incompatible MediaPipe package installed for Python 3.13.
 
-## 🛠️ Tech Stack & Tools
-- **Language**: Python 3.x
-- **Computer Vision**: OpenCV, MediaPipe
-- **Game Engine & Rendering**: Pygame
-- **Data Processing**: NumPy
+Python 3.12 must be installed with the Python Launcher (`py`). If it is not installed, install Python 3.12 first, then double-click `run_game.bat` again.
 
----
+Manual setup in PowerShell:
 
-## 🚀 Getting Started
+```powershell
+py -3.12 -m venv .venv
+.\\.venv\\Scripts\\python.exe -m pip install --upgrade pip
+.\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt
+.\\.venv\\Scripts\\python.exe main.py
+```
 
-### Prerequisites
-Ensure you have Python 3.8+ installed on your system along with a working webcam.
+Make sure your webcam is connected and allowed by Windows privacy settings.
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/fruit-cutting-game/fruit-cutting-Gesture.git](https://github.com/fruit-cutting-game/fruit-cutting-Gesture.git)
-   cd fruit-cutting-Gesture
+## Note
+
+The original game loop and its existing classes are kept in `src/game.py` to avoid accidentally breaking the game during the first structural refactor. The helper modules are separated and ready for incremental integration; the entire game logic has not yet been fully redistributed across every module.

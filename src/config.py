@@ -1,0 +1,6 @@
+"""Central defaults for the Fruit Cutting Gesture Game."""
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+DEFAULT_CAMERA_INDEX = 0
+DEFAULT_LIVES = 3
+DEFAULT_GAME_DURATION = 60

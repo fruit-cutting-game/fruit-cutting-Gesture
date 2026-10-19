@@ -1,0 +1,7 @@
+"""Named game states for menu and gameplay flow."""
+MENU = "MENU"
+CALIBRATION = "CALIBRATION"
+COUNTDOWN = "COUNTDOWN"
+PLAYING = "PLAYING"
+PAUSE = "PAUSE"
+GAME_OVER = "GAME_OVER"
