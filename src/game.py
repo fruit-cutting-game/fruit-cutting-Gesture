@@ -122,65 +122,55 @@ hands = mp_hands.Hands(
 
 IMAGE_FOLDER = os.path.join(ASSET_FOLDER, "images")
 
+
 fruit_files = {
-
     "apple": "apple.png",
-
     "banana": "banana.png",
-
     "grape": "grape.png",
-
     "orange": "orange.png",
-
     "pineapple": "pineapple.png",
-
-    "watermelon": "watermelon.png"
-
+    "watermelon": "watermelon.png",
+    "peach": "peach.png",
+    "mango": "mango.png"
 }
-
-
 
 fruit_images = {}
 
 for name, filename in fruit_files.items():
-
     path = os.path.join(IMAGE_FOLDER, filename)
-
     img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
 
     if img is not None:
-
         fruit_images[name] = img
-
-
+    else:
+        print(f"Warning: Could not load fruit image: {path}")
 
 splash_images = {
-
-    "yellow": cv2.imread(os.path.join(IMAGE_FOLDER, "yellow.png"), cv2.IMREAD_UNCHANGED),
-
-    "red": cv2.imread(os.path.join(IMAGE_FOLDER, "red.png"), cv2.IMREAD_UNCHANGED),
-
-    "blue": cv2.imread(os.path.join(IMAGE_FOLDER, "blue.png"), cv2.IMREAD_UNCHANGED)
-
+    "yellow": cv2.imread(
+        os.path.join(IMAGE_FOLDER, "yellow.png"),
+        cv2.IMREAD_UNCHANGED
+    ),
+    "red": cv2.imread(
+        os.path.join(IMAGE_FOLDER, "red.png"),
+        cv2.IMREAD_UNCHANGED
+    ),
+    "blue": cv2.imread(
+        os.path.join(IMAGE_FOLDER, "blue.png"),
+        cv2.IMREAD_UNCHANGED
+    )
 }
-
-
 
 fruit_splash_map = {
-
     "orange": "yellow",
-
     "pineapple": "yellow",
-
     "banana": "yellow",
-
+    "mango": "yellow",
     "apple": "red",
-
     "watermelon": "red",
-
+    "peach": "red",
     "grape": "blue"
-
 }
+
 
 
 
@@ -794,7 +784,7 @@ def maybe_spawn_extra_fruit(primary):
 
         return None
 
-    if random.random() >= 0.45:
+    if random.random() >= 0.90:
 
         return None
 
@@ -1101,24 +1091,25 @@ score = 0
 
 lives = 5
 
+# Multiple fruits can appear at the same time
 fruit = Fruit(w, h, speed_multiplier)
-
 extra_fruit = None
+fruits = [fruit]
 
+# Game effects
 splits = []
-
 boom_effects = []
-
 box_effects = []
-
 heart_effects = []
-
 splashes = []
 
+# Hand tracking trail
 finger_trail = collections.deque(maxlen=12)
 
-
-
+# Fruit spawning settings
+MAX_FRUITS = 8
+FRUIT_SPAWN_INTERVAL = 0.45
+last_fruit_spawn_time = time.time()
 jet_angle = -90
 
 shuriken_spin_angle = 0  # Extra rotation for the shuriken
