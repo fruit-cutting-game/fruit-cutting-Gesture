@@ -15,7 +15,8 @@ import time
 import pygame
 
 import numpy as np
-
+import json
+from datetime import datetime
 
 
 # 0. Initialize Pygame Mixer for Audio
@@ -31,7 +32,51 @@ ASSET_FOLDER = os.path.join(BASE_DIR, "assets")
 SOUND_FOLDER = os.path.join(ASSET_FOLDER, "sounds")
 
 
+# ================= SCORE HISTORY =================
+HISTORY_FILE = os.path.join(BASE_DIR, "score_history.json")
+MAX_HISTORY_RECORDS = 10
 
+
+def load_score_history():
+    """Load the saved game records from the JSON file."""
+    try:
+        if os.path.exists(HISTORY_FILE):
+            with open(HISTORY_FILE, "r", encoding="utf-8") as file:
+                data = json.load(file)
+
+            if isinstance(data, list):
+                return data[:MAX_HISTORY_RECORDS]
+
+    except (json.JSONDecodeError, OSError):
+        print("Warning: Could not read score history.")
+
+    return []
+
+
+def save_score_history(records):
+    """Save only the latest 10 game records."""
+    records = records[:MAX_HISTORY_RECORDS]
+
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as file:
+            json.dump(records, file, indent=4)
+    except OSError as error:
+        print(f"Could not save score history: {error}")
+
+
+def record_completed_game(final_score, difficulty, elapsed_seconds):
+    """Save one completed game without deleting older records."""
+    records = load_score_history()
+
+    record = {
+        "score": int(final_score),
+        "difficulty": str(difficulty),
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "time_survived": int(max(0, elapsed_seconds))
+    }
+
+    records.insert(0, record)
+    save_score_history(records)
 # Load Sound Effects
 
 slice_sound = None
@@ -1125,6 +1170,7 @@ btn_howto = (w // 2 - 310, 435, w // 2 - 105, 495)
 btn_settings = (w // 2 - 100, 435, w // 2 + 100, 495)
 btn_quit = (w // 2 + 105, 435, w // 2 + 310, 495)
 btn_back = (w // 2 - 120, 550, w // 2 + 120, 605)
+btn_history = (w // 2 - 120, 510, w // 2 + 120, 565)
 music_enabled = True
 sound_effects_enabled = True
 vibration_enabled = True
@@ -1380,6 +1426,15 @@ while True:
             draw_styled_button(
                 frame, btn_quit, "QUIT GAME", (95, 42, 55), hover_quit
             )
+            # History button
+            hover_history = (
+                btn_history[0] <= cx <= btn_history[2]
+                and btn_history[1] <= cy <= btn_history[3]
+            )
+
+            draw_styled_button(
+                frame, btn_history, "HISTORY", (45, 85, 125), hover_history
+            )
 
             footer = "Move your index finger and double-touch a button"
             (footer_w, _), _ = cv2.getTextSize(
@@ -1410,6 +1465,7 @@ while True:
             if game_state == "PLAYING":
                 score = 0
                 lives = 5
+                game_record_saved = False
                 is_paused = False
                 paused_duration = 0
                 game_start_time = time.time()
@@ -1435,8 +1491,11 @@ while True:
 
             elif hover_quit and check_double_click("quit"):
                 game_state = "QUIT"
+            elif hover_history and check_double_click("history"):
+                menu_page = "HISTORY"
 
         # ================= HOW TO PLAY PAGE =================
+        
         elif menu_page == "HOW_TO_PLAY":
             title = "HOW TO PLAY"
             (title_w, _), _ = cv2.getTextSize(
@@ -1669,7 +1728,104 @@ while True:
             ):
                 selected_difficulty = "HARD"
                 speed_multiplier = 1.35
+        # ================= HISTORY PAGE =================
+        elif menu_page == "HISTORY":
+            title = "SCORE HISTORY"
 
+            (title_w, _), _ = cv2.getTextSize(
+                title, cv2.FONT_HERSHEY_DUPLEX, 1.25, 3
+            )
+
+            cv2.putText(
+                frame, title, ((w - title_w) // 2, 125),
+                cv2.FONT_HERSHEY_DUPLEX, 1.25,
+                (0, 235, 255), 3, cv2.LINE_AA
+            )
+
+            records = load_score_history()
+
+            if not records:
+                message = "No game records yet. Play your first game!"
+                (message_w, _), _ = cv2.getTextSize(
+                    message, cv2.FONT_HERSHEY_SIMPLEX, 0.65, 2
+                )
+
+                cv2.putText(
+                    frame, message, ((w - message_w) // 2, 240),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.65,
+                    (230, 230, 240), 2, cv2.LINE_AA
+                )
+
+            else:
+                # Table headings
+                cv2.putText(
+                    frame, "NO.", (170, 175),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55,
+                    (0, 255, 255), 2, cv2.LINE_AA
+                )
+
+                cv2.putText(
+                    frame, "SCORE", (260, 175),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55,
+                    (0, 255, 255), 2, cv2.LINE_AA
+                )
+
+                cv2.putText(
+                    frame, "DIFFICULTY", (420, 175),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55,
+                    (0, 255, 255), 2, cv2.LINE_AA
+                )
+
+                cv2.putText(
+                    frame, "DATE", (650, 175),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55,
+                    (0, 255, 255), 2, cv2.LINE_AA
+                )
+
+                for index, record in enumerate(records[:10]):
+                    row_y = 210 + index * 32
+
+                    cv2.putText(
+                        frame, str(index + 1),
+                        (175, row_y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (240, 240, 240), 1, cv2.LINE_AA
+                    )
+
+                    cv2.putText(
+                        frame, str(record.get("score", 0)),
+                        (260, row_y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (100, 255, 130), 2, cv2.LINE_AA
+                    )
+
+                    cv2.putText(
+                        frame, str(record.get("difficulty", "UNKNOWN")),
+                        (420, row_y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.45,
+                        (240, 240, 240), 1, cv2.LINE_AA
+                    )
+
+                    date_text = str(record.get("date", "Unknown"))
+                    cv2.putText(
+                        frame, date_text,
+                        (650, row_y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4,
+                        (220, 220, 235), 1, cv2.LINE_AA
+                    )
+
+            # Back button
+            hover_back = (
+                btn_back[0] <= cx <= btn_back[2]
+                and btn_back[1] <= cy <= btn_back[3]
+            )
+
+            draw_styled_button(
+                frame, btn_back, "< BACK", (70, 55, 115), hover_back
+            )
+
+            if hover_back and check_double_click("back_history"):
+                menu_page = "HOME"
 
         if cx != -1 and cy != -1:
             draw_point_cursor(frame, cx, cy)
@@ -1739,6 +1895,9 @@ while True:
             score = 0
 
             lives = 5
+
+# Prevent saving the same game more than once
+            game_record_saved = False
 
             game_state = "MENU"
 
@@ -1955,6 +2114,18 @@ while True:
                         end_game_time = time.time()
 
                         game_state = "GAME_OVER"
+                        if not game_record_saved:
+                            elapsed_seconds = int(
+                            end_game_time - game_start_time - paused_duration
+                        )
+
+                        record_completed_game(
+                            score,
+                            selected_difficulty,
+                            elapsed_seconds
+                        )
+
+                        game_record_saved = True
 
                 else:
 
