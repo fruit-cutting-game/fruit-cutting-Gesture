@@ -1152,8 +1152,8 @@ splashes = []
 finger_trail = collections.deque(maxlen=12)
 
 # Fruit spawning settings
-MAX_FRUITS = 8
-FRUIT_SPAWN_INTERVAL = 0.45
+MAX_FRUITS = 16
+FRUIT_SPAWN_INTERVAL = 2
 last_fruit_spawn_time = time.time()
 jet_angle = -90
 

@@ -1,5 +1,35 @@
 [
     {
+        "score": 2180,
+        "difficulty": "HARD",
+        "date": "2026-10-26 13:49:09",
+        "time_survived": 103
+    },
+    {
+        "score": 350,
+        "difficulty": "MEDIUM",
+        "date": "2026-10-26 13:46:54",
+        "time_survived": 20
+    },
+    {
+        "score": 410,
+        "difficulty": "HARD",
+        "date": "2026-10-26 13:46:02",
+        "time_survived": 31
+    },
+    {
+        "score": 160,
+        "difficulty": "HARD",
+        "date": "2026-10-26 13:45:20",
+        "time_survived": 17
+    },
+    {
+        "score": 360,
+        "difficulty": "HARD",
+        "date": "2026-10-26 13:44:15",
+        "time_survived": 17
+    },
+    {
         "score": 340,
         "difficulty": "EASY",
         "date": "2026-10-26 10:40:46",
