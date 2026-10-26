@@ -1,7 +1,7 @@
 🍉 Fruit Cutting Gesture Game
 A webcam-controlled fruit-cutting game built with Python, OpenCV, MediaPipe, Pygame, and NumPy.
 Players use hand movements to control a virtual blade and cut fruits on the screen.
-📌 Table of Contents
+📌 Table of Content
 About the Project (https://chatgpt.com/c/6adef4ee-54c8-83ec-b92e-da284e9b3bdb#about-the-project)
 Features (https://chatgpt.com/c/6adef4ee-54c8-83ec-b92e-da284e9b3bdb#features)
 Technologies Used (https://chatgpt.com/c/6adef4ee-54c8-83ec-b92e-da284e9b3bdb#technologies-used)
